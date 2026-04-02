@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | RateMyDC</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #111827;
+        }
+
+        h1 { margin-top: 0; }
+        h2 { margin-top: 30px; font-size: 18px; }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        input, select {
+            flex: 1 1 150px;
+        }
+
+        button {
+            background: #2563eb;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .delete {
+            background: #ef4444;
+        }
+
+        .delete:hover {
+            background: #dc2626;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            background: white;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 500px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f3f4f6;
+        }
+
+        .review-link,
+        .teacher-page-link {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .teacher-page-link:hover,
+        .review-link:hover {
+            text-decoration: underline;
+        }
+
+        .desktop-only { display: block; }
+        .mobile-only { display: none; }
+
+        .review-card {
+            background: white;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .teacher {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .rating {
+            font-size: 13px;
+            background: #eef2ff;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .meta {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .snippet {
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .card-actions {
+            margin-top: 10px;
+        }
+
+        .teacher-search-wrap {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            margin-bottom: 22px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .teacher-search-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .teacher-search-box {
+            position: relative;
+        }
+
+        .teacher-search-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .teacher-search-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .teacher-search-results {
+            margin-top: 10px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            display: none;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .teacher-search-results.show {
+            display: block;
+        }
+
+        .teacher-search-result {
+            display: block;
+            padding: 12px 14px;
+            text-decoration: none;
+            color: #111827;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .teacher-search-result:last-child {
+            border-bottom: none;
+        }
+
+        .teacher-search-result:hover {
+            background: #f8fafc;
+        }
+
+        .teacher-search-name {
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .teacher-search-subject {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 3px;
+        }
+
+        .teacher-search-empty {
+            padding: 12px 14px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        @media (max-width: 700px) {
+            .desktop-only { display: none; }
+            .mobile-only { display: block; }
+
+            form {
+                flex-direction: column;
+            }
+
+            input, select, button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Admin Panel</h1>
+
+<div class="teacher-search-wrap">
+    <div class="teacher-search-title">Open teacher page</div>
+    <div class="teacher-search-box">
+        <input
+            type="text"
+            id="teacherPageSearch"
+            class="teacher-search-input"
+            placeholder="Search for a teacher"
+            autocomplete="off"
+        >
+        <div id="teacherSearchResults" class="teacher-search-results"></div>
+    </div>
+</div>
+
+<!-- ADD SUBJECT -->
+<h2>Add Subject</h2>
+<form method="POST" action="/admin/add-subject">
+    <input type="text" name="name" placeholder="Subject name" required>
+    <button type="submit">Add</button>
+</form>
+
+<div class="table-wrapper">
+<table>
+    <tr>
+        <th>Subject</th>
+        <th>Delete</th>
+    </tr>
+    {% for subject in subjects %}
+    <tr>
+        <td>{{ subject.name }}</td>
+        <td>
+            <a href="/admin/delete-subject/{{ subject.id }}">
+                <button class="delete" type="button">Delete</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<!-- ADD TEACHER -->
+<h2>Add Teacher</h2>
+<form method="POST" action="/admin/add-teacher">
+    <input type="text" name="name" placeholder="Teacher name" required>
+
+    <select name="subject_id" required>
+        <option value="">Select subject</option>
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}">{{ subject.name }}</option>
+        {% endfor %}
+    </select>
+
+    <button type="submit">Add</button>
+</form>
+
+<div class="table-wrapper">
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Subject</th>
+        <th>Teacher page</th>
+        <th>Delete</th>
+    </tr>
+    {% for teacher in teachers %}
+    <tr>
+        <td>{{ teacher.name }}</td>
+        <td>{{ teacher.subject.name }}</td>
+        <td>
+            <a class="teacher-page-link" href="/admin/teacher/{{ teacher.id }}">Open page</a>
+        </td>
+        <td>
+            <a href="/admin/delete-teacher/{{ teacher.id }}">
+                <button class="delete" type="button">Delete</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<!-- FILTER -->
+<h2>Filter Reviews</h2>
+<form method="GET" action="/admin">
+
+    <select id="subjectSelect" name="subject_id">
+        <option value="">All subjects</option>
+        {% for subject in subjects %}
+            <option value="{{ subject.id }}"
+                {% if selected_subject == subject.id|string %}selected{% endif %}>
+                {{ subject.name }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <select id="teacherSelect" name="teacher_id">
+        <option value="">All teachers</option>
+    </select>
+
+    <button type="submit">Apply</button>
+</form>
+
+<!-- REVIEWS -->
+<h2>Reviews</h2>
+
+<div class="table-wrapper desktop-only">
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Teacher</th>
+        <th>Rating</th>
+        <th>Review</th>
+        <th>Delete</th>
+    </tr>
+    {% for review in reviews %}
+    <tr>
+        <td>{{ review.user_name }}</td>
+        <td>{{ review.teacher.name }}</td>
+        <td>{{ review.rating }}</td>
+        <td>
+            <a class="review-link" href="/admin/review/{{ review.id }}">
+                {{ review.review_text[:40] }}...
+            </a>
+        </td>
+        <td>
+            <a href="/admin/delete-review/{{ review.id }}">
+                <button class="delete" type="button">Delete</button>
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<div class="mobile-only">
+    {% for review in reviews %}
+    <div class="review-card" onclick="window.location='/admin/review/{{ review.id }}'">
+
+        <div class="card-top">
+            <div class="teacher">{{ review.teacher.name }}</div>
+            <div class="rating">{{ review.rating }}/5</div>
+        </div>
+
+        <div class="meta">
+            {{ review.user_name }} • {{ review.teacher.subject.name }}
+        </div>
+
+        <div class="snippet">
+            {{ review.review_text[:80] }}...
+        </div>
+
+        <div class="card-actions">
+            <a href="/admin/delete-review/{{ review.id }}" onclick="event.stopPropagation();">
+                <button class="delete" type="button">Delete</button>
+            </a>
+        </div>
+
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    const subjectSelect = document.getElementById("subjectSelect");
+    const teacherSelect = document.getElementById("teacherSelect");
+
+    const teacherData = {
+        {% for subject in subjects %}
+        "{{ subject.id }}": [
+            {% for teacher in subject.teachers %}
+            { id: {{ teacher.id }}, name: "{{ teacher.name|escape }}", subject: "{{ subject.name|escape }}" }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        ]{% if not loop.last %},{% endif %}
+        {% endfor %}
+    };
+
+    function populateTeachers(subjectId, selectedTeacher = null) {
+        teacherSelect.innerHTML = '<option value="">All teachers</option>';
+
+        if (teacherData[subjectId]) {
+            teacherData[subjectId].forEach(t => {
+                const option = document.createElement("option");
+                option.value = t.id;
+                option.textContent = t.name;
+
+                if (selectedTeacher && selectedTeacher == t.id) {
+                    option.selected = true;
+                }
+
+                teacherSelect.appendChild(option);
+            });
+        }
+    }
+
+    subjectSelect.addEventListener("change", function() {
+        populateTeachers(this.value);
+    });
+
+    const selectedSubject = "{{ selected_subject or '' }}";
+    const selectedTeacher = "{{ selected_teacher or '' }}";
+
+    if (selectedSubject) {
+        subjectSelect.value = selectedSubject;
+        populateTeachers(selectedSubject, selectedTeacher);
+    }
+
+    const teacherPageSearch = document.getElementById("teacherPageSearch");
+    const teacherSearchResults = document.getElementById("teacherSearchResults");
+
+    const allTeachers = [
+        {% for teacher in teachers %}
+        {
+            id: {{ teacher.id }},
+            name: "{{ teacher.name|escape }}",
+            subject: "{{ teacher.subject.name|escape }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+
+    function renderTeacherSearchResults(matches) {
+        teacherSearchResults.innerHTML = "";
+
+        if (!matches.length) {
+            teacherSearchResults.innerHTML = '<div class="teacher-search-empty">No teachers found</div>';
+            teacherSearchResults.classList.add("show");
+            return;
+        }
+
+        matches.forEach(teacher => {
+            const link = document.createElement("a");
+            link.href = `/admin/teacher/${teacher.id}`;
+            link.className = "teacher-search-result";
+            link.innerHTML = `
+                <div class="teacher-search-name">${teacher.name}</div>
+                <div class="teacher-search-subject">${teacher.subject}</div>
+            `;
+            teacherSearchResults.appendChild(link);
+        });
+
+        teacherSearchResults.classList.add("show");
+    }
+
+    teacherPageSearch.addEventListener("input", function() {
+        const query = this.value.trim().toLowerCase();
+
+        if (!query) {
+            teacherSearchResults.classList.remove("show");
+            teacherSearchResults.innerHTML = "";
+            return;
+        }
+
+        const matches = allTeachers
+            .filter(teacher =>
+                teacher.name.toLowerCase().includes(query) ||
+                teacher.subject.toLowerCase().includes(query)
+            )
+            .slice(0, 8);
+
+        renderTeacherSearchResults(matches);
+    });
+
+    document.addEventListener("click", function(event) {
+        if (!event.target.closest(".teacher-search-box")) {
+            teacherSearchResults.classList.remove("show");
+        }
+    });
+
+    teacherPageSearch.addEventListener("focus", function() {
+        const query = this.value.trim().toLowerCase();
+
+        if (!query) {
+            return;
+        }
+
+        const matches = allTeachers
+            .filter(teacher =>
+                teacher.name.toLowerCase().includes(query) ||
+                teacher.subject.toLowerCase().includes(query)
+            )
+            .slice(0, 8);
+
+        renderTeacherSearchResults(matches);
+    });
+</script>
+
+</body>
+</html>
