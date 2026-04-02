@@ -36,7 +36,7 @@ class Teacher(db.Model):
 
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(100), nullable=False)
+    user_name = db.Column(db.String(100), nullable=False , default="Anonymous")
     rating = db.Column(db.Integer, nullable=False)
     review_text = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
@@ -183,11 +183,7 @@ with app.app_context():
     db.create_all()
     seed_subjects_and_teachers()
 
-with app.app_context():
-    for teacher in (
-        Teacher.query.join(Subject).order_by(Subject.name, Teacher.name).all()
-    ):
-        print(f'("{teacher.subject.name}", "{teacher.name}"),')
+
 # -------------------
 # ROUTES
 # -------------------
@@ -205,6 +201,8 @@ def submit():
     teacher_id = request.form.get("teacher")
     rating = request.form.get("rating")
     review_text = request.form.get("review")
+    if not name:
+        name = "Anonymous"
 
     if not name or not teacher_id or not rating or not review_text:
         return redirect(url_for("index"))
