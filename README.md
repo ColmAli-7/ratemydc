@@ -26,7 +26,7 @@ RateMyDC gives students a structured way to submit feedback on teachers, and giv
 
 1. Clone the repository
 ```bash
-git clone https://github.com/your-username/ratemydc.git
+git clone https://github.com/colmali-prog/ratemydc.git
 cd ratemydc
 ```
 
