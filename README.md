@@ -19,7 +19,7 @@ RateMyDC gives students a structured way to submit feedback on teachers, and giv
 | Layer | Technology |
 |---|---|
 | Backend | Flask (Python) |
-| Database | SQLite via SQLAlchemy (upgradeable to PostgreSQL) |
+| Database | SQLAlchemy, PostgreSQL |
 | Frontend | HTML, CSS (custom styling), Jinja2 |
 
 ## Setup
