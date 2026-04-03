@@ -3,3 +3,4 @@ gunicorn
 Flask-SQLAlchemy
 python-dotenv
 psycopg2-binary
+Flask-Limiter

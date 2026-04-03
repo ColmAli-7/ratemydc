@@ -3,12 +3,19 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from collections import Counter
 from flask import render_template, abort
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 import os
 from dotenv import load_dotenv
 
 load_dotenv()
 
 app = Flask(__name__)
+limiter = Limiter(
+    app=app,
+    key_func=get_remote_address,
+    default_limits=["200 per day", "50 per hour"],
+)
 
 
 
@@ -127,6 +134,7 @@ def admin():
 
 
 @app.route("/admin/login", methods=["GET", "POST"])
+@limiter.limit("5 per minute")
 def admin_login():
     if request.method == "POST":
         password = request.form.get("password")
