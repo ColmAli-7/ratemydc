@@ -78,7 +78,8 @@ def submit():
     review_text = request.form.get("review")
     if not name:
         name = "Anonymous"
-
+    if not review_text:
+        review_text = " "
     if not name or not teacher_id or not rating or not review_text:
         return redirect(url_for("index"))
 
